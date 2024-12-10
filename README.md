@@ -15,6 +15,11 @@ Data
 Yelp  Dataset:[ ](https://www.yelp.com/dataset) 
 The dataset contains over 7 million records of yelp reviews, including the review_ids, restraunts, food category, funny/cool/useful tags, and 5 star ratings. To make the project more straightforward, accessory features were trimmed, leaving just the written yelp reviews and their star ratings.
 
+Relevant github files:
+The Modeling branch houses all models, with reported accuracies
+
+The preprocessing branch handles all data processing, cleaning, and SQLite database conversion
+
 
 Models explored: 
 Naive Bayes
