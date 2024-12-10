@@ -10,8 +10,7 @@ Also used to house mainline functions to easily query to SQL database.
 from imports import *
 
 # Define file name
-file_name = 'star_reviews.db'
-
+file_name = 'star_reviews_record_ids.db'
 
 def sql_query_raw(db_file, query_limit=40000):
 
@@ -34,6 +33,7 @@ def sql_query_raw(db_file, query_limit=40000):
     # Define X and Y for vectorization and train/test split
     X_raw = df['processed_text']  
     Y_raw = df['stars']      
+    
 
     return X_raw, Y_raw
 
@@ -51,6 +51,28 @@ def sql_vectorized(db_file, query_limit=40000):
     trainX, testX, trainY, testY = train_test_split(VectorizedX, Y, test_size=0.2, random_state=42)
     
     return trainX, testX, trainY, testY
+
+def sql_embedded(db_file, query_limit=40000):
+    X, Y = sql_query_raw(db_file, query_limit=query_limit)
+
+    # Tokenize the text data
+    tokenized_X = [text.split() for text in X]
+
+    # Train a Word2Vec model
+    model = Word2Vec(sentences=tokenized_X, vector_size=100, window=5, min_count=1, workers=4)
+
+    # Get the average Word2Vec embedding for each review
+    def get_embedding(text):
+        word_vectors = [model.wv[word] for word in text.split() if word in model.wv]
+        return np.mean(word_vectors, axis=0) if word_vectors else np.zeros(model.vector_size)
+
+    # Convert text to embeddings
+    embedded_X = np.array([get_embedding(text) for text in X])
+
+    return embedded_X, Y
+
+    
+
 
 def Sparse(input):
     inputSparse = csr_matrix(input)
